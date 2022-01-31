@@ -6,15 +6,10 @@ export default class ListEditorController {
 
   init() {
     this.listEditor.drawUi();
-    this.listEditor.editClickListeners(this.onEditClick.bind(this));
-    this.listEditor.deleteClickListeners(this.onDeleteClick.bind(this));
+    this.listEditor.addNewClickListener(this.onNewClick.bind(this));
   }
 
-  onEditClick(li) {
-    console.log(li)
-  }
-
-  onDeleteClick(li) {
-    console.log(li)
+  onNewClick(li) {
+    this.listEditor.openModal();
   }
 }
