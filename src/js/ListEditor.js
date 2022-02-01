@@ -6,6 +6,7 @@ export default class ListEditor {
     this.editClickListeners = [];
     this.deleteClickListeners = [];
     this.newClickListeners = [];
+    this.tasksTable = null;
   }
 
   bindToDOM(container) {
@@ -29,12 +30,21 @@ export default class ListEditor {
         <button data-id="action-add" class="btn"><i class="fas fa-plus"></i></button>
       </header>
       <div class="list-editor-container">
-        <div data-id="list-editor" class="list-editor"></div>
+        <table data-id="list-editor" class="list-editor">
+          <thead>
+            <th>Название</th>
+            <th>Стоимость</th>
+            <th>Действия</th>
+          </thead>
+          <tbody>
+            <tr id="empty-row"><td colspan="3">Задач не найдено</td></tr>
+          </tbody>
+        </table>
       </div>
     `;
     this.newButton = this.container.querySelector('[data-id="action-add"]');
-
     this.newButton.addEventListener('click', e => this.onNewClick(e));
+    this.tasksTable = document.querySelector('[data-id="list-editor"]');
   }
 
   checkBinding() {
@@ -74,7 +84,38 @@ export default class ListEditor {
 
   saveForm(evt) {
     evt.preventDefault();
-    console.log(evt);
+    const name = document.querySelector('[data-id="inputName"');
+    const price = document.querySelector('[data-id="inputPrice"');
+    name.classList.remove('invalid');
+    price.classList.remove('invalid');
+    if (name.value && price.value) {
+      this.addLi(name.value, price.value);
+      this.closeModal();
+    } else if (!name.value) {
+      name.classList.add('invalid');
+    } else if (!price.value) {
+      price.classList.add('invalid');
+    }
+  }
+
+  addLi(name, price) {
+    if (this.tasksTable.querySelector('#empty-row')) {
+      this.tasksTable.querySelector('#empty-row').remove();
+    }
+    const row = document.createElement('tr');
+    row.innerHTML = `
+        <td>${name}</td>
+        <td>${price}</td>
+        <td>
+          <button type="button" data-id="inputEdit"><i class="fas fa-pencil-alt"></i></button>
+          <button type="button" data-id="inputDelete"><i class="fas fa-times"></i></button>
+        </td>
+        `;
+    this.tasksTable.querySelector('tbody').appendChild(row);
+  }
+
+  closeModal() {
+    document.querySelector('.modal').remove();
   }
 
   /**
