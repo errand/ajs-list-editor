@@ -112,16 +112,16 @@ export default class ListEditor {
     row.dataset.rowId = `row${this.getRandomInt()}`;
 
     row.innerHTML = `
-        <td data-id="inputName">${name}</td>
-        <td data-id="inputPrice">${price}</td>
+        <td data-id="tableName">${name}</td>
+        <td data-id="tablePrice">${price}</td>
         <td>
-          <button type="button" data-id="inputEdit"><i class="fas fa-pencil-alt"></i></button>
-          <button type="button" data-id="inputDelete"><i class="fas fa-times"></i></button>
+          <button type="button" data-id="buttonEdit"><i class="fas fa-pencil-alt"></i></button>
+          <button type="button" data-id="buttonDelete"><i class="fas fa-times"></i></button>
         </td>
         `;
     this.tasksTable.querySelector('tbody').appendChild(row);
-    this.tasksTable.querySelector('[data-id="inputEdit"]').addEventListener('click', evt => this.editTask(evt, row.dataset.rowId));
-    this.tasksTable.querySelector('[data-id="inputDelete"]').addEventListener('click', evt => this.deleteTask(evt));
+    row.querySelector('[data-id="buttonEdit"]').addEventListener('click', evt => this.editTask(evt, row.dataset.rowId));
+    row.querySelector('[data-id="buttonDelete"]').addEventListener('click', evt => this.deleteTask(evt));
   }
 
   updateLi(id, name, price) {
@@ -132,8 +132,8 @@ export default class ListEditor {
   editTask(evt, id) {
     const tr = evt.target.closest('tr');
 
-    const name = tr.querySelector('[data-id="inputName"]').innerHTML;
-    const price = tr.querySelector('[data-id="inputPrice"]').innerHTML;
+    const name = tr.querySelector('[data-id="tableName"]').innerHTML;
+    const price = tr.querySelector('[data-id="tablePrice"]').innerHTML;
 
     this.openModal(name, price, id);
   }
