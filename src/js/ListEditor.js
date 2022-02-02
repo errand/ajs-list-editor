@@ -120,17 +120,20 @@ export default class ListEditor {
         </td>
         `;
     this.tasksTable.querySelector('tbody').appendChild(row);
-    row.querySelector('[data-id="buttonEdit"]').addEventListener('click', evt => this.editTask(evt, row.dataset.rowId));
-    row.querySelector('[data-id="buttonDelete"]').addEventListener('click', evt => this.deleteTask(evt));
+    row.querySelector('[data-id="buttonEdit"]').addEventListener('click', () => this.editTask(row.dataset.rowId));
+    row.querySelector('[data-id="buttonDelete"]').addEventListener('click', () => this.deleteTask(row.dataset.rowId));
+    this.saveToLocalStorage();
   }
 
   updateLi(id, name, price) {
-    const row = this.tasksTable.querySelector(id);
-    console.log(row);
+    const row = this.tasksTable.querySelector(`[data-row-id="${id}"]`);
+    row.querySelector('[data-id="tableName"]').innerHTML = name;
+    row.querySelector('[data-id="tablePrice"]').innerHTML = price;
+    this.saveToLocalStorage();
   }
 
-  editTask(evt, id) {
-    const tr = evt.target.closest('tr');
+  editTask(id) {
+    const tr = this.tasksTable.querySelector(`[data-row-id="${id}"]`);
 
     const name = tr.querySelector('[data-id="tableName"]').innerHTML;
     const price = tr.querySelector('[data-id="tablePrice"]').innerHTML;
@@ -138,12 +141,24 @@ export default class ListEditor {
     this.openModal(name, price, id);
   }
 
-  deleteTask(evt) {
-    console.log(evt);
+  deleteTask(id) {
+    this.tasksTable.querySelector(`[data-row-id="${id}"]`).remove();
+    this.saveToLocalStorage();
   }
 
   closeModal() {
     document.querySelector('.modal').remove();
+  }
+
+  saveToLocalStorage() {
+    const rows = this.tasksTable.querySelectorAll('tbody tr');
+    console.log([...rows]);
+    [...rows].reduce((acc, tr) => {
+      console.log(acc);
+    }, {});
+    const fields = [...rows].map(({ id, value }) => ({ id, value }));
+    console.log(fields);
+    // localStorage.setItem('rows', JSON.stringify(fields));
   }
 
   /**
