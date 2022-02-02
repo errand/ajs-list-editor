@@ -53,7 +53,7 @@ export default class ListEditor {
     }
   }
 
-  openModal(name = '', price = '') {
+  openModal(name = '', price = '', id = '') {
     const modalContainer = document.createElement('div');
     modalContainer.classList.add('modal');
     modalContainer.classList.add('show');
@@ -76,20 +76,25 @@ export default class ListEditor {
   </div>
     `;
 
-    modalContainer.querySelector('[data-id="saveButton"]').addEventListener('click', evt => this.saveForm(evt));
-    modalContainer.querySelector('[data-id="cancelButton"]').addEventListener('click', evt => this.closeModal());
+    modalContainer.querySelector('[data-id="saveButton"]').addEventListener('click', evt => this.saveForm(evt, id));
+    modalContainer.querySelector('[data-id="cancelButton"]').addEventListener('click', () => this.closeModal());
 
     document.querySelector('body').appendChild(modalContainer);
   }
 
-  saveForm(evt) {
+  saveForm(evt, id) {
     evt.preventDefault();
+    console.log(id);
     const name = document.querySelector('[data-id="inputName"');
     const price = document.querySelector('[data-id="inputPrice"');
     name.classList.remove('invalid');
     price.classList.remove('invalid');
     if (name.value && price.value) {
-      this.addLi(name.value, price.value);
+      if (id) {
+        this.updateLi(id, name.value, price.value);
+      } else {
+        this.addLi(name.value, price.value);
+      }
       this.closeModal();
     } else if (!name.value) {
       name.classList.add('invalid');
@@ -103,15 +108,38 @@ export default class ListEditor {
       this.tasksTable.querySelector('#empty-row').remove();
     }
     const row = document.createElement('tr');
+
+    row.dataset.rowId = `row${this.getRandomInt()}`;
+
     row.innerHTML = `
-        <td>${name}</td>
-        <td>${price}</td>
+        <td data-id="inputName">${name}</td>
+        <td data-id="inputPrice">${price}</td>
         <td>
           <button type="button" data-id="inputEdit"><i class="fas fa-pencil-alt"></i></button>
           <button type="button" data-id="inputDelete"><i class="fas fa-times"></i></button>
         </td>
         `;
     this.tasksTable.querySelector('tbody').appendChild(row);
+    this.tasksTable.querySelector('[data-id="inputEdit"]').addEventListener('click', evt => this.editTask(evt, row.dataset.rowId));
+    this.tasksTable.querySelector('[data-id="inputDelete"]').addEventListener('click', evt => this.deleteTask(evt));
+  }
+
+  updateLi(id, name, price) {
+    const row = this.tasksTable.querySelector(id);
+    console.log(row);
+  }
+
+  editTask(evt, id) {
+    const tr = evt.target.closest('tr');
+
+    const name = tr.querySelector('[data-id="inputName"]').innerHTML;
+    const price = tr.querySelector('[data-id="inputPrice"]').innerHTML;
+
+    this.openModal(name, price, id);
+  }
+
+  deleteTask(evt) {
+    console.log(evt);
   }
 
   closeModal() {
@@ -129,5 +157,9 @@ export default class ListEditor {
 
   onNewClick(event) {
     this.newClickListeners.forEach(o => o.call(null, event));
+  }
+
+  getRandomInt() {
+    return Math.floor(1000 + Math.random() * 99999);
   }
 }
