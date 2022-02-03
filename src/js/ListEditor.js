@@ -47,7 +47,7 @@ export default class ListEditor {
   }
 
   loadFromLocalStorage() {
-    if ([...this.storage.getItem('rows')].length > 0) {
+    if (this.storage.getItem('rows') !== null) {
       const rows = JSON.parse(this.storage.getItem('rows'));
       rows.forEach(tr => {
         this.addLi(tr.name, tr.price, tr.id);
