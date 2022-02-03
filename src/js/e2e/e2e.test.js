@@ -3,7 +3,7 @@ import { fork } from 'child_process';
 
 jest.setTimeout(30000); // default puppeteer timeout
 
-describe('Popover tests', () => {
+describe('Popup tests', () => {
   let browser = null;
   let page = null;
   let server = null;
@@ -33,8 +33,8 @@ describe('Popover tests', () => {
     server.kill();
   });
 
-  it('should be titled "Popover"', async () => {
+  it('should be titled "ListEditor"', async () => {
     await page.goto(baseUrl);
-    await expect(page.title()).resolves.toMatch('Popover');
+    await expect(page.title()).resolves.toMatch('ListEditor');
   });
 });

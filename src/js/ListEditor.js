@@ -3,10 +3,9 @@ export default class ListEditor {
   constructor(container) {
     this.container = null;
     this.newButton = null;
-    this.editClickListeners = [];
-    this.deleteClickListeners = [];
     this.newClickListeners = [];
     this.tasksTable = null;
+    this.storage = window.localStorage;
   }
 
   bindToDOM(container) {
@@ -47,6 +46,15 @@ export default class ListEditor {
     this.tasksTable = document.querySelector('[data-id="list-editor"]');
   }
 
+  loadFromLocalStorage() {
+    if ([...this.storage.getItem('rows')].length > 0) {
+      const rows = JSON.parse(this.storage.getItem('rows'));
+      rows.forEach(tr => {
+        this.addLi(tr.name, tr.price, tr.id);
+      });
+    }
+  }
+
   checkBinding() {
     if (this.container === null) {
       throw new Error('Element not bind to DOM');
@@ -66,7 +74,7 @@ export default class ListEditor {
         </div>
         <div class="form-group">
           <label for="inputPrice" class="form-label">Стоимость</label>
-          <input value="${price}" data-id="inputPrice" type="text" class="form-control" id="inputPrice">
+          <input value="${price}" data-id="inputPrice" type="number" class="form-control" id="inputPrice">
         </div>
         <div class="form-group d-flex">
           <button type="button" data-id="saveButton" class="btn btn-primary">Сохранить</button>
@@ -84,7 +92,6 @@ export default class ListEditor {
 
   saveForm(evt, id) {
     evt.preventDefault();
-    console.log(id);
     const name = document.querySelector('[data-id="inputName"');
     const price = document.querySelector('[data-id="inputPrice"');
     name.classList.remove('invalid');
@@ -103,13 +110,17 @@ export default class ListEditor {
     }
   }
 
-  addLi(name, price) {
+  addLi(name, price, tr = '') {
     if (this.tasksTable.querySelector('#empty-row')) {
       this.tasksTable.querySelector('#empty-row').remove();
     }
     const row = document.createElement('tr');
 
-    row.dataset.rowId = `row${this.getRandomInt()}`;
+    if (tr) {
+      row.dataset.rowId = `row${tr}`;
+    } else {
+      row.dataset.rowId = `row${this.getRandomInt()}`;
+    }
 
     row.innerHTML = `
         <td data-id="tableName">${name}</td>
@@ -122,7 +133,10 @@ export default class ListEditor {
     this.tasksTable.querySelector('tbody').appendChild(row);
     row.querySelector('[data-id="buttonEdit"]').addEventListener('click', () => this.editTask(row.dataset.rowId));
     row.querySelector('[data-id="buttonDelete"]').addEventListener('click', () => this.deleteTask(row.dataset.rowId));
-    this.saveToLocalStorage();
+
+    if (!tr) {
+      this.saveToLocalStorage();
+    }
   }
 
   updateLi(id, name, price) {
@@ -152,13 +166,12 @@ export default class ListEditor {
 
   saveToLocalStorage() {
     const rows = this.tasksTable.querySelectorAll('tbody tr');
-    console.log([...rows]);
-    [...rows].reduce((acc, tr) => {
-      console.log(acc);
-    }, {});
-    const fields = [...rows].map(({ id, value }) => ({ id, value }));
-    console.log(fields);
-    // localStorage.setItem('rows', JSON.stringify(fields));
+    const obj = [...rows].map(el => ({
+      id: el.dataset.rowId,
+      name: el.querySelector('[data-id="tableName"]').innerHTML,
+      price: el.querySelector('[data-id="tablePrice"]').innerHTML,
+    }));
+    this.storage.setItem('rows', JSON.stringify(obj));
   }
 
   /**

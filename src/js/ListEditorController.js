@@ -1,11 +1,11 @@
 export default class ListEditorController {
-  constructor(listEditor, listEditorService) {
+  constructor(listEditor) {
     this.listEditor = listEditor;
-    this.listEditorService = listEditorService;
   }
 
   init() {
     this.listEditor.drawUi();
+    this.listEditor.loadFromLocalStorage();
     this.listEditor.addNewClickListener(this.onNewClick.bind(this));
   }
 
