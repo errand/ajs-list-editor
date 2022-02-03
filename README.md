@@ -3,6 +3,6 @@
 
 
 
-[GH Pages](https://errand.github.io/ahj-list-editor/) 
+[GH Pages](https://errand.github.io/ajs-list-editor/) 
 
 ---
